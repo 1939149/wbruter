@@ -1,4 +1,4 @@
-![Screenshot](/files/wbruter.png)
+![Screenshot](/files/wbruter.gif)
 # WBRUTER
 
 #### README
