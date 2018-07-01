@@ -3,7 +3,7 @@
 
 #### README
 
-Bruteforce tool for break the pin lock on smartphones from huawei.
+Bruteforce tool for break the pin lock on smartphones from huawei & samsung(may work on other phones, I do not have the  possibility to try)
 
 Please do not use this tool for a illegal purpose. I take no responsibility whatsoever for what other users do with my tool. 
 
